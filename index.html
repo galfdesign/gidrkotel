@@ -97,19 +97,22 @@
             <button class="icon-btn info-btn" type="button" aria-label="Пояснение">ⓘ</button>
             <div id="status-rad" class="status-chip">—</div>
           </div>
-          <div class="row">
-            <label>Q (радиаторы), кВт
-              <input type="number" id="qRad" min="0" step="0.1" value="10" />
-            </label>
-            <label>ΔT радиаторов, K
-              <input type="number" id="dTRad" min="1" step="1" value="20" />
-            </label>
-          </div>
+                    <div class="row">
+                      <label>Q (радиаторы), кВт
+                        <input type="number" id="qRad" min="0" step="0.1" value="10" />
+                      </label>
+                      <label>ΔT радиаторов, K
+                        <input type="number" id="dTRad" min="1" step="1" value="10" />
+                      </label>
+                    </div>
           <div class="row">
             <label>Δp (радиаторы), кПа
               <input type="number" id="dpRefRad" min="0" step="0.5" value="19.2" />
             </label>
             <div></div>
+          </div>
+          <div class="actions">
+            <button id="radQuickBtn" type="button" class="secondary">Быстрый расчёт Δp (приблизительно)</button>
           </div>
           <p class="hint">Расход: G = 0.86·Q/ΔT. Сопротивление задаём перепадом давления Δp (кПа) при расчётном расходе.</p>
           
@@ -154,6 +157,66 @@
         </div>
       </div>
       </main>
+    </div>
+
+    <!-- Modal: quick radiator calc -->
+    <div id="quickModal" class="modal hidden" aria-hidden="true">
+      <div class="modal-backdrop" data-close="modal"></div>
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="quickModalTitle">
+        <div class="modal-head">
+          <h3 id="quickModalTitle">Быстрый расчёт Δp радиаторного контура (приблизительно)</h3>
+          <button class="icon-btn" id="quickClose" type="button">✕</button>
+        </div>
+        <div class="modal-body">
+          <div class="steps">
+            <div class="step">
+              <div class="step-title">Шаг 1 — тип системы</div>
+              <div class="choices" id="sysChoices">
+                <label class="choice active"><input type="radio" name="radSys" value="tee" checked /><span class="ico tee" aria-hidden="true"></span><span>Тройниковая</span></label>
+                <label class="choice"><input type="radio" name="radSys" value="manifold" /><span class="ico manifold" aria-hidden="true"></span><span>Коллекторная</span></label>
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-title">Шаг 2 — геометрия самой нагруженной ветки</div>
+              <div class="step-row">
+                <label class="only-tee">Кол-во приборов на длинной ветке
+                  <input type="number" id="qcNumRad" min="1" step="1" value="6" />
+                </label>
+                <label>Длина ветки, м
+                  <input type="number" id="qcLen" min="1" step="1" value="35" />
+                </label>
+                <label>Внутренний диаметр трубы
+                  <select id="qcDiam">
+                    <option value="12">12 мм</option>
+                    <option value="16">16 мм</option>
+                    <option value="20" selected>20 мм</option>
+                    <option value="25">25 мм</option>
+                    <option value="custom">Другое…</option>
+                  </select>
+                </label>
+                <label class="only-custom" hidden>Свой диаметр, мм
+                  <input type="number" id="qcDiamCustom" min="5" max="50" step="0.1" value="18" />
+                </label>
+                <label class="only-manifold">Мощность радиатора, кВт
+                  <input type="number" id="qcQSingle" min="0" step="0.1" value="1.5" />
+                </label>
+                <label class="only-tee">Сумма мощностей радиаторов ветки, кВт
+                  <input type="number" id="qcQSum" min="0" step="0.1" value="6.0" />
+                </label>
+                
+              </div>
+            </div>
+            <div class="step">
+              <div class="step-title">Шаг 3 — результат (примерно)</div>
+              <div id="qcResult" class="qc-result"></div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button id="qcApply" type="button">Применить в расчёт</button>
+          <button id="qcCancel" type="button" class="secondary">Закрыть</button>
+        </div>
+      </div>
     </div>
 
     <div id="tab-single-circuit" class="tab-panel">
