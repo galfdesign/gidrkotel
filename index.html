@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Симулятор системы отопления — котёл, радиаторы и ТП через смеситель</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+    <body>
+      <header class="container header-bar">
+        <div class="header-left">
+          <img src="logo.png" alt="Логотип" class="header-logo-img" />
+          <div class="header-title">
+          <h1>Калькулятор гидравлики котельной</h1>
+          </div>
+        </div>
+      <div class="header-actions">
+        <button id="resetBtn" class="secondary" type="button">Сброс</button>
+      </div>
+    </header>
+
+    <nav class="container tabs">
+      <button class="tab-btn active" data-tab="two-circuits">Два контура без разделителя</button>
+      <button class="tab-btn" data-tab="single-circuit">Один контур от котла</button>
+      <button class="tab-btn" data-tab="separator">Гидравлический разделитель</button>
+      <button class="tab-btn" data-tab="primary-secondary">Первично-вторичные контуры</button>
+    </nav>
+
+    <div id="tab-two-circuits" class="tab-panel active">
+      <section class="container">
+        <div class="card scheme-card">
+          <h2>Схема системы</h2>
+          <canvas id="scheme" width="1200" height="420" aria-label="Схема распределения расходов и напоров"></canvas>
+          <div id="scheme-panels" class="scheme-panels"></div>
+        </div>
+      </section>
+
+      <main class="container">
+      <div class="layout">
+        <div class="layout-left">
+          <div class="grid-entities">
+        <section id="card-boiler" class="card card-entity">
+          <div class="card-head">
+            <h2>Котёл</h2>
+            <button class="icon-btn info-btn" type="button" aria-label="Пояснение">ⓘ</button>
+            <div id="status-boiler" class="status-chip">—</div>
+          </div>
+          <div class="row">
+            <label>Тип котла
+              <select id="boilerType" class="chevron"></select>
+            </label>
+            <label>Скорость насоса
+              <select id="boilerStep" class="chevron"></select>
+            </label>
+          </div>
+          <div class="row">
+            <label>Температура подачи, °C
+              <input type="number" id="tBoiler" min="30" max="80" step="1" value="65" />
+            </label>
+          </div>
+          <div class="adv-toggle">
+            <button id="boilerAdvBtn" class="secondary" type="button">Расширенные параметры</button>
+          </div>
+          <div class="advanced">
+            <div class="row">
+              <label>Запас по напору, %
+                <input type="number" id="headMargin" min="0" max="50" step="5" value="20" />
+              </label>
+              <label>Минимальный расход Gmin, м³/ч
+                <input type="number" id="boilerGmin" min="0" step="0.05" value="0.30" />
+              </label>
+            </div>
+            <div class="row">
+              <label>Насос котла: H₀, м
+                <input type="number" id="boilerH0" min="1" step="0.5" value="6.0" />
+              </label>
+              <label>Насос котла: Gmax, м³/ч
+                <input type="number" id="boilerGmax" min="0.5" step="0.1" value="3.0" />
+              </label>
+            </div>
+            <div class="row">
+              <label>Сопротивление котла: H, м
+                <input type="number" id="hRefBoiler" min="0" step="0.1" value="1.0" />
+              </label>
+              <label>Сопротивление котла при: G, м³/ч
+                <input type="number" id="gRefBoiler" min="0.1" step="0.1" value="0.8" />
+              </label>
+            </div>
+            <p class="muted">Значения ориентировочные для выбранного типа котла. Можно изменить при необходимости.</p>
+          </div>
+          <p class="hint">Для учебной простоты здесь выбирается только температура подачи. Параметры насоса и сопротивления котла предзаданы по модели.</p>
+        </section>
+
+        <section id="card-rad" class="card card-entity">
+          <div class="card-head">
+            <h2>Радиаторный контур</h2>
+            <button class="icon-btn info-btn" type="button" aria-label="Пояснение">ⓘ</button>
+            <div id="status-rad" class="status-chip">—</div>
+          </div>
+          <div class="row">
+            <label>Q (радиаторы), кВт
+              <input type="number" id="qRad" min="0" step="0.1" value="10" />
+            </label>
+            <label>ΔT радиаторов, K
+              <input type="number" id="dTRad" min="1" step="1" value="20" />
+            </label>
+          </div>
+          <div class="row">
+            <label>Δp (радиаторы), кПа
+              <input type="number" id="dpRefRad" min="0" step="0.5" value="19.2" />
+            </label>
+            <div></div>
+          </div>
+          <p class="hint">Расход: G = 0.86·Q/ΔT. Сопротивление задаём перепадом давления Δp (кПа) при расчётном расходе.</p>
+          
+        </section>
+
+        <section class="card card-entity">
+          <div class="card-head">
+            <h2>Тёплый пол (через смеситель)</h2>
+            <button class="icon-btn info-btn" type="button" aria-label="Пояснение">ⓘ</button>
+            <div id="status-ufh" class="status-chip">—</div>
+          </div>
+          <div class="row">
+            <label>Q (ТП), кВт
+              <input type="number" id="qUFH" min="0" step="0.1" value="8" />
+            </label>
+            <label>ΔT ТП, K
+              <input type="number" id="dTUFH" min="1" step="1" value="7" />
+            </label>
+          </div>
+          <div class="row">
+            <label>Подача ТП (после смесителя), °C
+              <input type="number" id="tUFHSupply" min="25" max="50" step="1" value="43" />
+            </label>
+            <div></div>
+          </div>
+          <div class="row">
+            <label>Сопротивление контура до смесителя (Δp), кПа
+              <input type="number" id="dpRefUFHPrim" min="0" step="0.5" value="9.6" />
+            </label>
+            <label>Kvs трёхходового клапана, м³/ч
+              <input type="number" id="kvsUFH" min="0" step="0.1" value="1.5" />
+            </label>
+          </div>
+          <p class="hint">ТП имеет собственный насос ПОСЛЕ трёхходового клапана: он обеспечивает расход петель. Котёл подаёт только первичный подмес к смесителю. Сопротивление контура ДО смесителя (первичка) задаём как Δp (кПа) при расчётном расходе первички.</p>
+        </section>
+          </div>
+        </div>
+        <div class="layout-right">
+          <section class="card results-card">
+            <div id="results" class="results"></div>
+          </section>
+        </div>
+      </div>
+      </main>
+    </div>
+
+    <div id="tab-single-circuit" class="tab-panel">
+      <section class="container">
+        <div class="card">
+          <h2>Один контур от котла</h2>
+          <p>В разработке…</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-separator" class="tab-panel">
+      <section class="container">
+        <div class="card">
+          <h2>Гидравлический разделитель</h2>
+          <p>В разработке…</p>
+        </div>
+      </section>
+    </div>
+
+    <div id="tab-primary-secondary" class="tab-panel">
+      <section class="container">
+        <div class="card">
+          <h2>Первично-вторичные контуры</h2>
+          <p>В разработке…</p>
+        </div>
+      </section>
+    </div>
+
+    
+
+    
+
+    <script src="script.js"></script>
+  </body>
+  </html>
+
+
