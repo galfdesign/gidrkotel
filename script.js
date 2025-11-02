@@ -669,6 +669,19 @@ function resetForm() {
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  // Ранний выход на мобильных устройствах: показываем баннер и не инициализируем приложение
+  const mwEl = document.getElementById('mobileWarning');
+  const isCoarseInput = window.matchMedia('(pointer: coarse)').matches;
+  const isNarrow = window.innerWidth <= 900;
+  const isUaMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (isCoarseInput || isNarrow || isUaMobile) {
+    if (mwEl) {
+      mwEl.style.display = 'block';
+      mwEl.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('has-mobile-warning', 'mobile-locked');
+    }
+    return; // Не запускаем инициализацию на мобильных
+  }
   document.getElementById('resetBtn').addEventListener('click', resetForm);
   const boilerCard = document.getElementById('card-boiler');
   const boilerAdvBtn = document.getElementById('boilerAdvBtn');

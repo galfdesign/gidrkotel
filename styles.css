@@ -230,3 +230,13 @@ canvas { width: 100%; height: auto; aspect-ratio: 15 / 7; background: #ffffff; b
 .mobile-warning .mw-close { background: transparent; color: #7f1d1d; border: 1px solid #f3c2c2; border-radius: 6px; padding: 4px 8px; cursor: pointer; }
 @media (max-width: 900px) { body.has-mobile-warning { padding-top: 48px; } }
 
+/* Блокировка интерфейса на мобильных */
+body.mobile-locked .header-bar,
+body.mobile-locked .tabs,
+body.mobile-locked .tab-panel,
+body.mobile-locked .results-card,
+body.mobile-locked .layout,
+body.mobile-locked .container:not(.header-bar) {
+  display: none !important;
+}
+
