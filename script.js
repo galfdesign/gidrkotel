@@ -637,6 +637,34 @@ function resetForm() {
       el.value = el.defaultValue;
     }
   });
+  // Плашка-предупреждение для мобильных устройств
+  const mw = document.getElementById('mobileWarning');
+  function shouldShowMobileWarning() {
+    const isCoarse = window.matchMedia('(pointer: coarse)').matches;
+    const isSmall = window.innerWidth <= 900;
+    const uaMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    return isCoarse || isSmall || uaMobile;
+  }
+  function showMobileWarning() {
+    if (!mw) return;
+    mw.style.display = 'block';
+    mw.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('has-mobile-warning');
+  }
+  function hideMobileWarning() {
+    if (!mw) return;
+    mw.style.display = 'none';
+    mw.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('has-mobile-warning');
+  }
+  if (mw) {
+    mw.querySelector('.mw-close')?.addEventListener('click', hideMobileWarning);
+    if (shouldShowMobileWarning()) showMobileWarning();
+    window.addEventListener('resize', () => {
+      if (shouldShowMobileWarning()) showMobileWarning(); else hideMobileWarning();
+    });
+  }
+
   calcAndRender();
 }
 

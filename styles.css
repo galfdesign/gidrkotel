@@ -224,3 +224,9 @@ canvas { width: 100%; height: auto; aspect-ratio: 15 / 7; background: #ffffff; b
 .alert { padding: 10px 12px; border: 1px solid; border-radius: 8px; font-size: 13px; margin-top: 12px; }
 .alert-danger { border-color: #e11d48; background: #fff1f2; color: #7f1d1d; }
 
+/* Mobile warning banner */
+.mobile-warning { display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 5000; background: #fff1f2; color: #7f1d1d; border-bottom: 1px solid #e11d48; }
+.mobile-warning .mw-inner { max-width: 1200px; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 13px; }
+.mobile-warning .mw-close { background: transparent; color: #7f1d1d; border: 1px solid #f3c2c2; border-radius: 6px; padding: 4px 8px; cursor: pointer; }
+@media (max-width: 900px) { body.has-mobile-warning { padding-top: 48px; } }
+
